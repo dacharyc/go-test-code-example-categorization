@@ -12,7 +12,7 @@ func main() {
 	files := GetFiles()
 
 	// To change the model, use a different model's string name here
-	llm, err := ollama.New(ollama.WithModel("qwen2.5-coder"))
+	llm, err := ollama.New(ollama.WithModel(MODEL))
 	if err != nil {
 		log.Fatalf("failed to connect to ollama: %v", err)
 	}
@@ -20,18 +20,15 @@ func main() {
 	hashes := make(map[string]bool)
 
 	for _, file := range files {
-		isDuplicate := false
 		contents, err := os.ReadFile(file)
 		if err != nil {
-			fmt.Println("File reading error", err)
+			fmt.Printf("failed to read file: %v\n", err)
 			return
 		}
 		category := CategorizeSnippet(string(contents), llm, ctx)
 		snippetHash := GetSnippetHash(string(contents))
-		exists := hashes[snippetHash]
-		if exists {
-			isDuplicate = true
-		} else {
+		isDuplicate := CheckExampleIsDuplicate(hashes, snippetHash)
+		if !isDuplicate {
 			hashes[snippetHash] = true
 		}
 

@@ -9,8 +9,9 @@ import (
 // GetFiles traverses directories recursively from the startDirPath and adds file paths to an array of strings that it
 // passes back to main.go to read into memory and categorize
 func GetFiles() []string {
-	// To traverse a different directory on your file system, change the path here
-	startDirPath, _ := filepath.Abs("../go-test-code-example-categorization/examples")
+	// To traverse a different directory on your file system, change the path in `constants.go`
+	// or create a new path variable that isn't relative to the root of this repo
+	startDirPath, _ := filepath.Abs(RelSnippetsStartDirectory)
 
 	fileList := make([]string, 0)
 	e := filepath.Walk(startDirPath, func(path string, f os.FileInfo, err error) error {

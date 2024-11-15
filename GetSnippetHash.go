@@ -10,7 +10,7 @@ import (
 // GetSnippetHash removes whitespace from the string code example, and then creates a sha256 representation of it to
 // save memory and use when calculating whether the code example is a duplicate
 func GetSnippetHash(contents string) string {
-	whitespaceStrippedString := SpaceMap(contents)
+	whitespaceStrippedString := StripWhitespace(contents)
 	hasher := sha256.New()
 	_, err := io.WriteString(hasher, whitespaceStrippedString)
 	if err != nil {

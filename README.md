@@ -70,7 +70,12 @@ you can run the project from an IDE or from the command line.
 
 As written, this project categorizes files in the `examples/` directory of
 this repository. If you'd like to categorize files in a different part of your
-file system, change the file path in ln 13 of `GetFiles.go`.
+file system, either:
+
+- Change to another directory relative to the root of this project by changing
+  the path in `constants.go`
+- Change the relative file path in ln 14 of `GetFiles.go` to an absolute file
+  path on your system
 
 This project currently categorizes _all_ files in the given directory. If you
 want to differentiate between code examples and other types of files, add
@@ -93,12 +98,55 @@ go build
 go run .
 ```
 
+## Run the tests
+
+This project includes basic tests to verify the functionality. You might want
+to run the tests again if you change the prompt or the model, or if you need
+to add new tests because you're modifying the logic for traversing files or
+generating an artifact.
+
+### IDE
+
+#### Run a single test
+
+To run a test from an IDE, press the `play` button next to the test
+function you want to run.
+
+#### Run all the tests
+
+In any test file, press the `play` button next to the package declaration and
+select `Run` -> `go test test-code-example-categorization`
+
+### Command-line
+
+#### Run a single test
+
+To run a test from the command line, run the following command:
+
+```
+go test test-code-example-categorization -run TestFuncName
+```
+
+Example:
+
+```
+go test test-code-example-categorization -run TestGetSnippetHash
+```
+
+#### Run all the tests
+
+To run all tests from the command line, run the following command:
+
+```
+go test
+```
+
 ## Todo
 
 ### Create an artifact
 
 Currently, this project only prints the output to the console. Refer
-to ln 40 in `main.go`.
+to ln 37 in `main.go`.
 
 To move from a proof-of-concept for testing to a useful tool, we should add
 handling to create some artifact of performing the categorization. The two most
