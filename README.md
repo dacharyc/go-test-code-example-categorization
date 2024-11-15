@@ -58,8 +58,9 @@ command:
 ollama pull qwen2.5-coder
 ```
 
-If you want to use a different model, change the model name in ln 15 of
-`main.go`.
+If you want to use a different model, pull a different model from Ollama, and
+change the model name in `constants.go`. The model name is a constant so it's
+available to both the project and the tests.
 
 ## Run the project
 
