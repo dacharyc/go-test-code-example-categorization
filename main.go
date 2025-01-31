@@ -23,14 +23,8 @@ func containsString(slice []string, value string) bool {
 func main() {
 	startTime := time.Now()
 	files := GetFiles()
-	projectName := "cloud-docs"
-
-	// To change the model, use a different model's string name here
-	llm, err := ollama.New(ollama.WithModel(MODEL))
-	if err != nil {
-		log.Fatalf("failed to connect to ollama: %v", err)
-	}
-	ctx := context.Background()
+	//projectName := "cloud-docs"
+	projectName := "go-test-code-example-categorization"
 	//hashes := make(map[string]bool)
 
 	var snippets []SnippetInfo
@@ -39,8 +33,12 @@ func main() {
 
 	LogStartInfoToConsole(startTime)
 
-	textShellOrJson := []string{JSON, SHELL, TEXT, XML, YAML}
-	driversLanguagesMinusJS := []string{C, CPP, CSHARP, GO, JAVA, KOTLIN, PHP, PYTHON, RUBY, RUST, SCALA, SWIFT, TYPESCRIPT}
+	// To change the model, use a different model's string name here
+	llm, err := ollama.New(ollama.WithModel(MODEL))
+	if err != nil {
+		log.Fatalf("failed to connect to ollama: %v", err)
+	}
+	ctx := context.Background()
 
 	for _, file := range files {
 		contents, err := os.ReadFile(file)
@@ -54,17 +52,7 @@ func main() {
 		ext := filepath.Ext(file)
 		lang := GetLangFromExtension(ext)
 
-		var category string
-
-		if containsString(textShellOrJson, lang) {
-			category = CategorizeTextShellOrJsonSnippet(string(contents), llm, ctx)
-		} else if containsString(driversLanguagesMinusJS, lang) {
-			category = CategorizeDriverLanguageSnippet(string(contents), llm, ctx)
-		} else if lang == JAVASCRIPT {
-			category = CategorizeJavaScriptSnippet(string(contents), llm, ctx)
-		} else {
-			fmt.Printf("unknown language: %v\n", lang)
-		}
+		category, attempts := ProcessSnippet(string(contents), lang, llm, ctx)
 		//snippetHash := GetSnippetHash(string(contents))
 		//isDuplicate := CheckExampleIsDuplicate(hashes, snippetHash)
 		//if !isDuplicate {
@@ -75,6 +63,7 @@ func main() {
 			Page:     pagePath,
 			Category: category,
 			Language: lang,
+			Attempts: attempts,
 			//Duplicate: isDuplicate,
 		}
 		snippets = append(snippets, details)
