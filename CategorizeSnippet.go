@@ -20,7 +20,6 @@ func ProcessSnippet(contents string, lang string, llm *ollama.LLM, ctx context.C
 			return category, attemptCounter
 		} else {
 			attemptCounter++
-			category = LLMAssignCategory(contents, lang, llm, ctx)
 		}
 	}
 	return "Uncategorized", attemptCounter
