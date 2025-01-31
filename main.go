@@ -11,6 +11,15 @@ import (
 	"time"
 )
 
+func containsString(slice []string, value string) bool {
+	for _, v := range slice {
+		if v == value {
+			return true
+		}
+	}
+	return false
+}
+
 func main() {
 	startTime := time.Now()
 	files := GetFiles()
@@ -30,24 +39,38 @@ func main() {
 
 	LogStartInfoToConsole(startTime)
 
+	textShellOrJson := []string{JSON, SHELL, TEXT, XML, YAML}
+	driversLanguagesMinusJS := []string{C, CPP, CSHARP, GO, JAVA, KOTLIN, PHP, PYTHON, RUBY, RUST, SCALA, SWIFT, TYPESCRIPT}
+
 	for _, file := range files {
 		contents, err := os.ReadFile(file)
 		if err != nil {
 			fmt.Printf("failed to read file: %v\n", err)
 			return
 		}
-		category := CategorizeSnippet(string(contents), llm, ctx)
+		// Find the starting index of "cloud-docs"
+		startIndex := strings.Index(file, projectName)
+		pagePath := file[startIndex:]
+		ext := filepath.Ext(file)
+		lang := GetLangFromExtension(ext)
+
+		var category string
+
+		if containsString(textShellOrJson, lang) {
+			category = CategorizeTextShellOrJsonSnippet(string(contents), llm, ctx)
+		} else if containsString(driversLanguagesMinusJS, lang) {
+			category = CategorizeDriverLanguageSnippet(string(contents), llm, ctx)
+		} else if lang == JAVASCRIPT {
+			category = CategorizeJavaScriptSnippet(string(contents), llm, ctx)
+		} else {
+			fmt.Printf("unknown language: %v\n", lang)
+		}
 		//snippetHash := GetSnippetHash(string(contents))
 		//isDuplicate := CheckExampleIsDuplicate(hashes, snippetHash)
 		//if !isDuplicate {
 		//	hashes[snippetHash] = true
 		//}
 
-		// Find the starting index of "cloud-docs"
-		startIndex := strings.Index(file, projectName)
-		pagePath := file[startIndex:]
-		ext := filepath.Ext(file)
-		lang := GetLangFromExtension(ext)
 		details := SnippetInfo{
 			Page:     pagePath,
 			Category: category,
