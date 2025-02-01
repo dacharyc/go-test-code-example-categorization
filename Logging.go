@@ -8,6 +8,11 @@ import (
 func LogStartInfoToConsole(startTime time.Time, fileCount int) {
 	fmt.Printf("Processing %d files for %s project\n", fileCount, ProjectName)
 	fmt.Println("Starting at ", startTime)
+	// On an M1 Max laptop from 2021 w/64GB of RAM, a single file takes ~750000000 to process
+	// Adjust processing time as needed based on the hardware running this program
+	var processingTime = 750000000
+	var timeForJob = time.Duration(fileCount * processingTime)
+	fmt.Printf("Estimated time to run: %s\n", timeForJob)
 }
 
 func LogFinishInfoToConsole(startTime time.Time, filesProcessed int) {
