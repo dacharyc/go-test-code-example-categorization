@@ -11,7 +11,8 @@ import (
 func GetFiles() []string {
 	// To traverse a different directory on your file system, change the path in `constants.go`
 	// or create a new path variable that isn't relative to the root of this repo
-	startDirPath, _ := filepath.Abs(RelSnippetsStartDirectory)
+	fullFilePath := RelSnippetsStartDirectory + ProjectName
+	startDirPath, _ := filepath.Abs(fullFilePath)
 
 	fileList := make([]string, 0)
 	e := filepath.Walk(startDirPath, func(path string, f os.FileInfo, err error) error {

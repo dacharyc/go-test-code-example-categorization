@@ -23,15 +23,13 @@ func containsString(slice []string, value string) bool {
 func main() {
 	startTime := time.Now()
 	files := GetFiles()
-	//projectName := "cloud-docs"
-	projectName := "go-test-code-example-categorization"
+	totalFileCount := len(files)
+	LogStartInfoToConsole(startTime, totalFileCount)
 	//hashes := make(map[string]bool)
 
 	var snippets []SnippetInfo
 	counts := make(map[string]map[string]int)
 	filesProcessed := 0
-
-	LogStartInfoToConsole(startTime)
 
 	// To change the model, use a different model's string name here
 	llm, err := ollama.New(ollama.WithModel(MODEL))
@@ -46,40 +44,41 @@ func main() {
 			fmt.Printf("failed to read file: %v\n", err)
 			return
 		}
-		// Find the starting index of "cloud-docs"
-		startIndex := strings.Index(file, projectName)
+		// Find the starting index of the project name to strip the earlier parts of the filepath
+		startIndex := strings.Index(file, ProjectName)
 		pagePath := file[startIndex:]
 		ext := filepath.Ext(file)
-		lang := GetLangFromExtension(ext)
+		if ext != ".DS_Store" {
+			lang := GetLangFromExtension(ext)
 
-		category, attempts := ProcessSnippet(string(contents), lang, llm, ctx)
-		//snippetHash := GetSnippetHash(string(contents))
-		//isDuplicate := CheckExampleIsDuplicate(hashes, snippetHash)
-		//if !isDuplicate {
-		//	hashes[snippetHash] = true
-		//}
+			category, attempts := ProcessSnippet(string(contents), lang, llm, ctx)
+			//snippetHash := GetSnippetHash(string(contents))
+			//isDuplicate := CheckExampleIsDuplicate(hashes, snippetHash)
+			//if !isDuplicate {
+			//	hashes[snippetHash] = true
+			//}
 
-		details := SnippetInfo{
-			Page:     pagePath,
-			Category: category,
-			Language: lang,
-			Attempts: attempts,
-			//Duplicate: isDuplicate,
+			details := SnippetInfo{
+				Page:     pagePath,
+				Category: category,
+				Language: lang,
+				Attempts: attempts,
+				//Duplicate: isDuplicate,
+			}
+			snippets = append(snippets, details)
+			if _, exists := counts[details.Category]; !exists {
+				counts[details.Category] = make(map[string]int)
+			}
+			// Increment the language count for the specific category
+			counts[details.Category][details.Language]++
 		}
-		snippets = append(snippets, details)
-		if _, exists := counts[details.Category]; !exists {
-			counts[details.Category] = make(map[string]int)
-		}
-		// Increment the language count for the specific category
-		counts[details.Category][details.Language]++
 		filesProcessed++
 		if filesProcessed%100 == 0 {
 			fmt.Println("Processed ", filesProcessed, " snippets")
 		}
 	}
+
+	WriteSnippetReport(snippets, ProjectName)
+	WriteCategoryCountsReport(counts, ProjectName)
 	LogFinishInfoToConsole(startTime, filesProcessed)
-
-	WriteSnippetReport(snippets, projectName)
-
-	WriteCategoryCountsReport(counts, projectName)
 }

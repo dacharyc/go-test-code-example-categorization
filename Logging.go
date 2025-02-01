@@ -5,8 +5,8 @@ import (
 	"time"
 )
 
-func LogStartInfoToConsole(startTime time.Time) {
-	fmt.Println("Categorizing snippets from files")
+func LogStartInfoToConsole(startTime time.Time, fileCount int) {
+	fmt.Printf("Processing %d files for %s project\n", fileCount, ProjectName)
 	fmt.Println("Starting at ", startTime)
 }
 
