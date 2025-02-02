@@ -6,13 +6,13 @@ import (
 )
 
 func TestCheckExampleIsDuplicateYes(t *testing.T) {
-	firstExampleFilepath := RelSnippetsStartDirectory + "/other/insertOne.sh"
+	firstExampleFilepath := SnippetsStartDirectory + "/other/insertOne.sh"
 	firstExample, err := os.ReadFile(firstExampleFilepath)
 	if err != nil {
 		t.Errorf("failed to read file %v", err)
 	}
 	firstExampleHash := GetSnippetHash(string(firstExample))
-	secondExampleFilepath := RelSnippetsStartDirectory + "/other/insertOneDuplicate.sh"
+	secondExampleFilepath := SnippetsStartDirectory + "/other/insertOneDuplicate.sh"
 	secondExample, err := os.ReadFile(secondExampleFilepath)
 	if err != nil {
 		t.Errorf("failed to read file %v", err)
@@ -27,13 +27,13 @@ func TestCheckExampleIsDuplicateYes(t *testing.T) {
 }
 
 func TestCheckExampleIsDuplicateNo(t *testing.T) {
-	firstExampleFilepath := RelSnippetsStartDirectory + "/other/insertOne.sh"
+	firstExampleFilepath := SnippetsStartDirectory + "/other/insertOne.sh"
 	firstExample, err := os.ReadFile(firstExampleFilepath)
 	if err != nil {
 		t.Errorf("failed to read file %v", err)
 	}
 	firstExampleHash := GetSnippetHash(string(firstExample))
-	secondExampleFilepath := RelSnippetsStartDirectory + "/other/returnExample.sh"
+	secondExampleFilepath := SnippetsStartDirectory + "/other/returnExample.sh"
 	secondExample, err := os.ReadFile(secondExampleFilepath)
 	if err != nil {
 		t.Errorf("failed to read file %v", err)
