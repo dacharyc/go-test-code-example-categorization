@@ -86,6 +86,6 @@ func main() {
 	}
 
 	WriteSnippetReport(snippets, ProjectName)
-	WriteCategoryCountsReport(counts, llmCategorizedCount, stringMatchedCount, ProjectName)
+	WriteCategoryCountsReport(totalFileCount, counts, llmCategorizedCount, stringMatchedCount, ProjectName)
 	LogFinishInfoToConsole(startTime, filesProcessed)
 }
