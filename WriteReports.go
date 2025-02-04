@@ -28,9 +28,15 @@ func WriteSnippetReport(snippets []SnippetInfo, projectName string) {
 	fmt.Println("Snippet report successfully written to", snippetDetailsFilepath)
 }
 
-func WriteCategoryCountsReport(counts map[string]map[string]int, projectName string) {
+func WriteCategoryCountsReport(counts map[string]map[string]int, llmCategorised int, stringMatched int, projectName string) {
 	categorySums := GetCategorySums(counts)
-	repoData, jsonMarshallingErr := json.MarshalIndent(categorySums, "", "  ")
+	repoReport := RepoReport{
+		LLMCategorizedCount:    llmCategorised,
+		StringMatchedCount:     stringMatched,
+		CategoryLanguageCounts: categorySums,
+	}
+	repoData, jsonMarshallingErr := json.MarshalIndent(repoReport, "", "  ")
+
 	if jsonMarshallingErr != nil {
 		fmt.Println("Error marshalling JSON:", jsonMarshallingErr)
 		return

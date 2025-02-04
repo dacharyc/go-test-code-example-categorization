@@ -29,6 +29,8 @@ func main() {
 
 	var snippets []SnippetInfo
 	counts := make(map[string]map[string]int)
+	llmCategorizedCount := 0
+	stringMatchedCount := 0
 	filesProcessed := 0
 
 	// To change the model, use a different model's string name here
@@ -48,10 +50,10 @@ func main() {
 		startIndex := strings.Index(file, ProjectName)
 		pagePath := file[startIndex:]
 		ext := filepath.Ext(file)
-		if ext != ".DS_Store" {
+		if !strings.Contains(file, ".DS_Store") {
 			lang := GetLangFromExtension(ext)
 
-			category, attempts := ProcessSnippet(string(contents), lang, llm, ctx)
+			category, llmCategorized := ProcessSnippet(string(contents), lang, llm, ctx)
 			//snippetHash := GetSnippetHash(string(contents))
 			//isDuplicate := CheckExampleIsDuplicate(hashes, snippetHash)
 			//if !isDuplicate {
@@ -59,10 +61,10 @@ func main() {
 			//}
 
 			details := SnippetInfo{
-				Page:     pagePath,
-				Category: category,
-				Language: lang,
-				Attempts: attempts,
+				Page:           pagePath,
+				Category:       category,
+				Language:       lang,
+				LLMCategorized: llmCategorized,
 				//Duplicate: isDuplicate,
 			}
 			snippets = append(snippets, details)
@@ -71,6 +73,11 @@ func main() {
 			}
 			// Increment the language count for the specific category
 			counts[details.Category][details.Language]++
+			if llmCategorized {
+				llmCategorizedCount++
+			} else if llmCategorized == false {
+				stringMatchedCount++
+			}
 		}
 		filesProcessed++
 		if filesProcessed%100 == 0 {
@@ -79,6 +86,6 @@ func main() {
 	}
 
 	WriteSnippetReport(snippets, ProjectName)
-	WriteCategoryCountsReport(counts, ProjectName)
+	WriteCategoryCountsReport(counts, llmCategorizedCount, stringMatchedCount, ProjectName)
 	LogFinishInfoToConsole(startTime, filesProcessed)
 }
