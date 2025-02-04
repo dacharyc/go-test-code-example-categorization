@@ -32,6 +32,17 @@ func HasUsageExamplePrefix(contents string) bool {
 	return false
 }
 
+func ContainsUsageExampleString(contents string) bool {
+	aggregationExample := ".aggregate"
+	substrings := []string{aggregationExample}
+	for _, substr := range substrings {
+		if strings.Contains(contents, substr) {
+			return true
+		}
+	}
+	return false
+}
+
 func ProcessSnippet(contents string, lang string, llm *ollama.LLM, ctx context.Context) (string, bool) {
 	var category string
 	validCategories := []string{AtlasCliCommand, ApiMethodSignature, ExampleReturnObject, ExampleConfigurationObject, UsageExample}
@@ -42,6 +53,8 @@ func ProcessSnippet(contents string, lang string, llm *ollama.LLM, ctx context.C
 	if strings.HasPrefix(contents, "atlas ") {
 		return AtlasCliCommand, false
 	} else if HasUsageExamplePrefix(contents) {
+		return UsageExample, false
+	} else if ContainsUsageExampleString(contents) {
 		return UsageExample, false
 	} else {
 		category = LLMAssignCategory(contents, lang, llm, ctx)
