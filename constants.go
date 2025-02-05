@@ -10,6 +10,7 @@ const (
 	AtlasCliCommand            = "Atlas CLI Command"
 	ApiMethodSignature         = "API Method Signature"
 	MongoshCommand             = "mongosh command"
+	NonMongoCommand            = "Non-MongoDB command"
 	ExampleReturnObject        = "Example return object"
 	ExampleConfigurationObject = "Example configuration object"
 	UsageExample               = "Task-based usage"

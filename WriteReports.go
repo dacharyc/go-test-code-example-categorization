@@ -51,11 +51,14 @@ func CalculateAccuracyPercentages(totalCodeCount, llmCategorizedCount, stringMat
 func WriteCategoryCountsReport(totalCodeBlocks int, counts map[string]map[string]int, llmCategorised int, stringMatched int, projectName string) {
 	categorySums := GetCategorySums(counts)
 	accuracyEstimate := CalculateAccuracyPercentages(totalCodeBlocks, llmCategorised, stringMatched)
+	catDetails := CategorizationDetails{
+		LLMCategorizedCount: llmCategorised,
+		StringMatchedCount:  stringMatched,
+		AccuracyEstimate:    accuracyEstimate,
+	}
 	repoReport := RepoReport{
 		TotalCodeBlocks:        totalCodeBlocks,
-		LLMCategorizedCount:    llmCategorised,
-		StringMatchedCount:     stringMatched,
-		AccuracyEstimate:       accuracyEstimate,
+		CategorizationDetails:  catDetails,
 		CategoryLanguageCounts: categorySums,
 	}
 	repoData, jsonMarshallingErr := json.MarshalIndent(repoReport, "", "  ")
