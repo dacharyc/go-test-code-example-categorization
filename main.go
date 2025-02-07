@@ -21,6 +21,13 @@ func containsString(slice []string, value string) bool {
 }
 
 func main() {
+	isDriverProject := false
+	driversProjects := []string{"c", "cpp-driver", "csharp", "java", "java-rs", "kotlin", "kotlin-sync", "laravel", "node", "php-library", "pymongo", "pymongo-arrow", "ruby-driver", "rust", "scala"}
+	for _, driver := range driversProjects {
+		if ProjectName == driver {
+			isDriverProject = true
+		}
+	}
 	startTime := time.Now()
 	files := GetFiles()
 	totalFileCount := len(files)
@@ -53,7 +60,7 @@ func main() {
 		if !strings.Contains(file, ".DS_Store") {
 			lang := GetLangFromExtension(ext)
 
-			category, llmCategorized := ProcessSnippet(string(contents), lang, llm, ctx)
+			category, llmCategorized := ProcessSnippet(string(contents), lang, llm, ctx, isDriverProject)
 			//snippetHash := GetSnippetHash(string(contents))
 			//isDuplicate := CheckExampleIsDuplicate(hashes, snippetHash)
 			//if !isDuplicate {
@@ -86,6 +93,6 @@ func main() {
 	}
 
 	WriteSnippetReport(snippets, ProjectName)
-	WriteCategoryCountsReport(totalFileCount, counts, llmCategorizedCount, stringMatchedCount, ProjectName)
+	WriteCategoryCountsReport(totalFileCount, counts, llmCategorizedCount, stringMatchedCount, ProjectName, isDriverProject)
 	LogFinishInfoToConsole(startTime, filesProcessed)
 }
